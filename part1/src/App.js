@@ -1,11 +1,17 @@
 const App = () => {
   const course = "Half Stack application development";
-  const part1 = "Fundamentals of React";
-  const exercises1 = 10;
-  const part2 = "Using props to pass data";
-  const exercises2 = 7;
-  const part3 = "State of a component";
-  const exercises3 = 14;
+  const part1 = {
+    name: "Fundamentals of React",
+    exercises: 10,
+  };
+  const part2 = {
+    name: "Using props to pass data",
+    exercises: 7,
+  };
+  const part3 = {
+    name: "State of a component",
+    exercises: 14,
+  };
 
   const Header = (props) => {
     return (
@@ -19,7 +25,7 @@ const App = () => {
     return (
       <div>
         <p>
-          {props.part} {props.exercise}
+          {props.obj.name} {props.obj.exercises}
         </p>
       </div>
     );
@@ -28,9 +34,9 @@ const App = () => {
   const Content = (props) => {
     return (
       <div>
-        <Part part={props.part1} exercise={props.exercises1} />
-        <Part part={props.part2} exercise={props.exercises2} />
-        <Part part={props.part3} exercise={props.exercises3} />
+        <Part obj={props.obj1} />
+        <Part obj={props.obj2} />
+        <Part obj={props.obj3} />
       </div>
     );
   };
@@ -39,8 +45,8 @@ const App = () => {
     return (
       <div>
         <p>
-          Number of exercises{" "}
-          {props.exercises1 + props.exercises2 + props.exercises3}
+          Number of exercises
+          {props.obj1.exercises + props.obj2.exercises + props.obj3.exercises}
         </p>
       </div>
     );
@@ -49,19 +55,8 @@ const App = () => {
   return (
     <div>
       <Header course={course} />
-      <Content
-        part1={part1}
-        part2={part2}
-        part3={part3}
-        exercises1={exercises1}
-        exercises2={exercises2}
-        exercises3={exercises3}
-      />
-      <Total
-        exercises1={exercises1}
-        exercises2={exercises2}
-        exercises3={exercises3}
-      />
+      <Content obj1={part1} obj2={part2} obj3={part3} />
+      <Total obj1={part1} obj2={part2} obj3={part3} />
     </div>
   );
 };
