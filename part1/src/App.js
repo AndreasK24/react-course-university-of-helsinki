@@ -1,118 +1,55 @@
 import { useState } from "react";
 
-const Button = ({ text, handleClick }) => (
-  <button onClick={handleClick}>{text}</button>
+const Button = ({ handleClick, text }) => (
+  <button onClick={() => handleClick()}> {text}</button>
 );
-const StatisticLine = ({ text, value }) => (
-  <tr>
-    <td>{text}:</td>
-    <td>{value}</td>
-  </tr>
-);
-const Statistics = ({ good, bad, neutral, all, average, positive }) => {
-  if (good || bad || neutral) {
-    return (
-      <table>
-        <tbody>
-          <StatisticLine text={"Good"} value={good}></StatisticLine>
-          <StatisticLine text={"Neutral"} value={neutral}></StatisticLine>
-          <StatisticLine text={"Bad"} value={bad}></StatisticLine>
-          <StatisticLine text={"All"} value={all}></StatisticLine>
-          <StatisticLine text={"Average"} value={average}></StatisticLine>
-          <StatisticLine text={"Positive"} value={positive}></StatisticLine>
-        </tbody>
-      </table>
-    );
-  }
-  return <h1>No feedback given</h1>;
-};
 
 const App = () => {
-  const [good, setGood] = useState({ counter: 0, value: 1 });
-  const [neutral, setNeutral] = useState({ counter: 0, value: 0 });
-  const [bad, setBad] = useState({ counter: 0, value: -1 });
-  const [all, setAll] = useState(0);
-  const [average, setAverage] = useState(0);
-  const [positive, setPositive] = useState(0);
+  const anecdotes = [
+    "If it hurts, do it more often.",
+    "Adding manpower to a late software project makes it later!",
+    "The first 90 percent of the code accounts for the first 10 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.",
+    "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
+    "Premature optimization is the root of all evil.",
+    "Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.",
+    "Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.",
+    "The only way to go fast, is to go well.",
+  ];
+  const points = {};
+  for (let i = 0; i < anecdotes.length; i++) {
+    points[i.toString()] = 0;
+  }
+  const [selected, setSelected] = useState(0);
+  const [most, setMost] = useState(0);
+  const [votes, setVotes] = useState(points);
 
-  const handleGood = () => {
-    const updatedGood = good.counter + 1;
-    const newGood = {
-      ...good,
-      counter: updatedGood,
-    };
-    setGood(newGood);
-    const newAll = updatedGood + neutral.counter + bad.counter;
-    setAll(newAll);
-    const sumOfFeedBack = updatedGood * good.value + bad.counter * bad.value;
-    const newAverage = sumOfFeedBack / newAll;
-    setAverage(newAverage);
-    const newPositive = updatedGood / newAll;
-    setPositive(newPositive);
+  const nextAnecdote = () => {
+    const randomNumber = Math.floor(Math.random() * anecdotes.length);
+    setSelected(randomNumber);
   };
-  const handleNeutral = () => {
-    const updatedNeutral = neutral.counter + 1;
-    const newNeutral = {
-      ...neutral,
-      counter: updatedNeutral,
-    };
-    setNeutral(newNeutral);
-    const newAll = good.counter + updatedNeutral + bad.counter;
-    setAll(newAll);
-    const sumOfFeedBack = good.counter * good.value + bad.counter * bad.value;
-    const newAverage = sumOfFeedBack / newAll;
-    setAverage(newAverage);
-    const newPositive = good.counter / newAll;
-    setPositive(newPositive);
+  const vote = () => {
+    const copy = { ...votes };
+    // increment the property 2 value by one
+    copy[selected] += 1;
+    setVotes(copy);
+    let most = 0;
+    for (let i = 0; i < anecdotes.length; i++) {
+      if (copy[most] < copy[i]) {
+        most = i;
+      }
+    }
+    setMost(most);
   };
-  const handleBad = () => {
-    const updatedBad = bad.counter + 1;
-    const newBad = {
-      ...bad,
-      counter: updatedBad,
-    };
-    setBad(newBad);
-    const newAll = good.counter + neutral.counter + updatedBad;
-    setAll(newAll);
-    const sumOfFeedBack = good.counter * good.value + updatedBad * bad.value;
-    const newAverage = sumOfFeedBack / newAll;
-    setAverage(newAverage);
-    const newPositive = good.counter / newAll;
-    setPositive(newPositive);
-  };
-
   return (
     <div>
-      <h1>Give feedback</h1>
-      <div>
-        <Button
-          text={"good"}
-          handleClick={() => {
-            handleGood();
-          }}
-        ></Button>
-        <Button
-          text={"neutral"}
-          handleClick={() => {
-            handleNeutral();
-          }}
-        ></Button>
-        <Button
-          text={"bad"}
-          handleClick={() => {
-            handleBad();
-          }}
-        ></Button>
-      </div>
-      <h1>Statistics</h1>
-      <Statistics
-        good={good.counter}
-        bad={bad.counter}
-        neutral={neutral.counter}
-        all={all}
-        average={average}
-        positive={positive}
-      ></Statistics>
+      <h1>Anecdote of the day</h1>
+      <p>{anecdotes[selected]}</p>
+      <p>has {votes[selected]} votes</p>
+      <Button handleClick={vote} text={"Vote"}></Button>
+      <Button handleClick={nextAnecdote} text={"Next Anecdote"}></Button>
+      <h1>Anecdote with most votes</h1>
+      <p>{anecdotes[most]}</p>
+      <p>has {votes[most]} votes</p>
     </div>
   );
 };
