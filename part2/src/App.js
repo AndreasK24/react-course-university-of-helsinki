@@ -1,12 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { id: 1, name: "Arto Hellas", number: "040-1234567" },
-  ]);
+  const [persons, setPersons] = useState([]);
+  useEffect(() => {
+    console.log("effect");
+
+    const eventHandler = (response) => {
+      console.log("promise fulfilled");
+      setPersons(response.data);
+    };
+
+    const promise = axios.get("http://localhost:3001/persons");
+    promise.then(eventHandler);
+  }, []);
   return (
     <div>
       <h2>Phonebook</h2>
