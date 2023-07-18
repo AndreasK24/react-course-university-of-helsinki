@@ -1,4 +1,5 @@
 import { useState } from "react";
+import personService from "../services/persons";
 
 const PersonForm = ({ persons, setPersons }) => {
   const [newName, setNewName] = useState("");
@@ -15,20 +16,39 @@ const PersonForm = ({ persons, setPersons }) => {
     event.preventDefault();
     const filter = persons.filter((person) => newName === person.name);
     console.log("Filter:", filter);
+
     if (filter.length !== 0) {
-      alert(`${newName} is already added to phonebook`);
+      if (
+        window.confirm(
+          `${newName} is already in the phonebook, replace the old number with the new one?`
+        )
+      ) {
+        const filteredElement = filter[0];
+        filteredElement.number = newNumber;
+        personService
+          .update(filteredElement.id, filteredElement)
+          .then((res) => console.log(res));
+        const updatedPerson = persons.map((p) =>
+          p.id === filteredElement.id ? filteredElement : p
+        );
+        console.log("Updated person array", updatedPerson);
+        setPersons(updatedPerson);
+        setNewName("");
+        setNewNumber("");
+      } else {
+      }
     } else {
       const nameObject = {
         id: persons.length + 1,
         name: newName,
         number: newNumber,
       };
-      console.log("nameObject:", nameObject);
-      const newPersons = persons.concat(nameObject);
-      console.log("newPersons:", newPersons);
-      setPersons(newPersons);
-      setNewName("");
-      setNewNumber("");
+      personService.create(nameObject).then((returnedPerson) => {
+        const newPersons = persons.concat(returnedPerson);
+        setPersons(newPersons);
+        setNewName("");
+        setNewNumber("");
+      });
     }
   };
   return (
