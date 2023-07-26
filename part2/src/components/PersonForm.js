@@ -48,17 +48,25 @@ const PersonForm = ({ persons, setPersons }) => {
       }
     } else {
       const nameObject = {
-        id: persons.length + 1,
         name: newName,
         number: newNumber,
       };
-      setErrorMessage(`Added ${nameObject.name}`);
-      personService.create(nameObject).then((returnedPerson) => {
-        const newPersons = persons.concat(returnedPerson);
-        setPersons(newPersons);
-        setNewName("");
-        setNewNumber("");
-      });
+
+      personService
+        .create(nameObject)
+        .then((returnedPerson) => {
+          const newPersons = persons.concat(returnedPerson);
+          setPersons(newPersons);
+          setNewName("");
+          setNewNumber("");
+          setError(false);
+          setErrorMessage(`Added ${nameObject.name}`);
+        })
+        .catch((error) => {
+          setError(true);
+          setErrorMessage(error.response.data.error);
+          console.log(error.response.data.error);
+        });
     }
   };
   return (
