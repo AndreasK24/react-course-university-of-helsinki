@@ -1,5 +1,6 @@
 const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
+const User = require("../models/user");
 
 blogsRouter.get("/", async (request, response) => {
   /*Blog.find({}).then((blogs) => {
@@ -19,8 +20,8 @@ blogsRouter.get("/:id", async (request, response, next) => {
 });
 
 blogsRouter.post("/", async (request, response, next) => {
-  const user = await User.findById(body.userId);
   const body = request.body;
+  const user = await User.findById(body.userId);
   if (!body.title || !body.url) {
     response.status(400).end();
   } else {
