@@ -1,18 +1,22 @@
+const supertest = require("supertest");
+const mongoose = require("mongoose");
+
+const helper = require("../tests/test_helpers_blog");
+const app = require("../app");
+const api = supertest(app);
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
 
-//...
+beforeEach(async () => {
+  await User.deleteMany({});
+
+  const passwordHash = await bcrypt.hash("sekret", 10);
+  const user = new User({ username: "root", passwordHash });
+
+  await user.save();
+});
 
 describe("when there is initially one user in db", () => {
-  beforeEach(async () => {
-    await User.deleteMany({});
-
-    const passwordHash = await bcrypt.hash("sekret", 10);
-    const user = new User({ username: "root", passwordHash });
-
-    await user.save();
-  });
-
   test("creation succeeds with a fresh username", async () => {
     const usersAtStart = await helper.usersInDb();
 
@@ -55,4 +59,8 @@ describe("when there is initially one user in db", () => {
     const usersAtEnd = await helper.usersInDb();
     expect(usersAtEnd).toEqual(usersAtStart);
   });
+});
+
+afterAll(async () => {
+  await mongoose.connection.close();
 });
