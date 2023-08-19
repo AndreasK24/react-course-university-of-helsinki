@@ -59,6 +59,93 @@ describe("when there is initially one user in db", () => {
     const usersAtEnd = await helper.usersInDb();
     expect(usersAtEnd).toEqual(usersAtStart);
   });
+
+  test("creation fails with proper statuscode and message if username is not provided", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      name: "Superuserer",
+      password: "salainen",
+    };
+
+    const result = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    //console.log(result);
+    expect(result.body.error).toContain("No password or username provided");
+
+    const usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toEqual(usersAtStart);
+  });
+
+  test("creation fails with proper statuscode and message if password is not provided", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "rooter123",
+      name: "Superuser123",
+    };
+
+    const result = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    expect(result.body.error).toContain("No password or username provided");
+
+    const usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toEqual(usersAtStart);
+  });
+
+  test("creation fails with proper statuscode and message if username is less than 3 characters long", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "ro",
+      name: "Superuser",
+      password: "salainen",
+    };
+
+    const result = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    expect(result.body.error).toContain(
+      "Username length must be greater than 3"
+    );
+
+    const usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toEqual(usersAtStart);
+  });
+
+  test("creation fails with proper statuscode and message if password is less than 3 characters long", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "rooter1234",
+      name: "Superuser",
+      password: "sa",
+    };
+
+    const result = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    expect(result.body.error).toContain(
+      "Password length must be greater than 3"
+    );
+
+    const usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toEqual(usersAtStart);
+  });
 });
 
 afterAll(async () => {

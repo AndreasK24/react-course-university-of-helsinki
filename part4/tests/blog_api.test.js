@@ -13,9 +13,18 @@ beforeEach(async () => {
   const blogObjects = helper.initialBlogs.map((blog) => new Blog(blog));
   const promiseArray = blogObjects.map((blog) => blog.save());
   await Promise.all(promiseArray);
+  /* const usersAtStart = await helper.usersInDb();
+  const newUser = {
+    username: "mluukkai",
+    name: "Matti Luukkainen",
+    password: "salainen",
+  };
+
+  const secondUser = await api.post("/api/users").send(newUser);
+  console.log("First User", usersAtStart); */
 });
 
-describe("Testing the GET function of the API", () => {
+describe("Testing the GET function of the BLOGS API", () => {
   test("blogs are returned as json", async () => {
     await api
       .get("/api/blogs")
@@ -31,7 +40,7 @@ describe("Testing the GET function of the API", () => {
   });
 });
 
-describe("Testing the POST function of the API", () => {
+describe("Testing the POST function of the BLOGS API", () => {
   test("a valid blog can be added ", async () => {
     const newBlog = {
       title: "async/await simplifies making async calls",
@@ -39,10 +48,18 @@ describe("Testing the POST function of the API", () => {
       url: "www",
       likes: 10,
     };
-
+    const user = {
+      username: "mluukkai",
+      password: "salainen",
+    };
+    const res = await api.post("/api/login").send(user);
     await api
       .post("/api/blogs")
       .send(newBlog)
+      .set({
+        Authorization: `Bearer ${res.body.token}`,
+        "Content-Type": "application/json",
+      })
       .expect(201)
       .expect("Content-Type", /application\/json/);
 
@@ -59,10 +76,18 @@ describe("Testing the POST function of the API", () => {
       author: "Ich",
       url: "www",
     };
-
+    const user = {
+      username: "mluukkai",
+      password: "salainen",
+    };
+    const res = await api.post("/api/login").send(user);
     await api
       .post("/api/blogs")
       .send(newBlog)
+      .set({
+        Authorization: `Bearer ${res.body.token}`,
+        "Content-Type": "application/json",
+      })
       .expect(201)
       .expect("Content-Type", /application\/json/);
 
@@ -74,45 +99,107 @@ describe("Testing the POST function of the API", () => {
     const findPostedBlog = blogs.find(
       (blog) => blog.title === "async/await simplifies making async calls"
     );
-    console.log("findPostedBlog", findPostedBlog);
+    //console.log("findPostedBlog", findPostedBlog);
     expect(findPostedBlog).toBeDefined();
     if (findPostedBlog) expect(findPostedBlog.likes).toBeDefined();
     expect(findPostedBlog.likes).toBe(0);
   });
 
   describe("testing if invalid blogs are rejected and throwing an error", () => {
-    test("an invalid blog can not be added if blog has no title", async () => {
+    test("a blog can not be added if blog has no title", async () => {
       const newBlog = {
         author: "Ich",
         url: "www",
         likes: 2134,
       };
-
-      await api.post("/api/blogs").send(newBlog).expect(400);
+      const user = {
+        username: "mluukkai",
+        password: "salainen",
+      };
+      const res = await api.post("/api/login").send(user);
+      await api
+        .post("/api/blogs")
+        .send(newBlog)
+        .set({
+          Authorization: `Bearer ${res.body.token}`,
+          "Content-Type": "application/json",
+        })
+        .expect(400);
     });
 
-    test("an invalid blog can not be added if blog has no url", async () => {
+    test("a blog can not be added if blog has no url", async () => {
       const newBlog = {
         title: "async/await simplifies making async calls",
         author: "Ich",
         likes: 2134,
       };
-
-      await api.post("/api/blogs").send(newBlog).expect(400);
+      const user = {
+        username: "mluukkai",
+        password: "salainen",
+      };
+      const res = await api.post("/api/login").send(user);
+      await api
+        .post("/api/blogs")
+        .send(newBlog)
+        .set({
+          Authorization: `Bearer ${res.body.token}`,
+          "Content-Type": "application/json",
+        })
+        .expect(400);
     });
 
-    test("an invalid blog can not be added if blog has no title and no url", async () => {
+    test("a blog can not be added if blog has no title and no url", async () => {
       const newBlog = {
         author: "Ich",
         likes: 1234,
       };
+      const user = {
+        username: "mluukkai",
+        password: "salainen",
+      };
+      const res = await api.post("/api/login").send(user);
+      await api
+        .post("/api/blogs")
+        .send(newBlog)
+        .set({
+          Authorization: `Bearer ${res.body.token}`,
+          "Content-Type": "application/json",
+        })
+        .expect(400);
+    });
 
-      await api.post("/api/blogs").send(newBlog).expect(400);
+    test("a blog can not be added if blog has no token", async () => {
+      const newBlog = {
+        title: "asdfa-flip-horizontal",
+        author: "Ich",
+        url: "www",
+        likes: 2134,
+      };
+
+      await api.post("/api/blogs").send(newBlog).expect(401);
+    });
+
+    test("a blog can not be added if blog has invalid token", async () => {
+      const newBlog = {
+        title: "asdfa-flip-horizontal",
+        author: "Ich",
+        url: "www",
+        likes: 2134,
+      };
+
+      await api
+        .post("/api/blogs")
+        .send(newBlog)
+        .set({
+          Authorization: `XXX`,
+          "Content-Type": "application/json",
+        })
+        .expect(401);
     });
   });
 });
 
-describe("Testing the PUT function of the API", () => {
+describe("Testing the PUT function of the BLOGS API", () => {
   test("a valid blog can be updated ", async () => {
     const blogsAtStart = await helper.blogsInDb();
     const blogToUpdate = blogsAtStart[0];
@@ -206,12 +293,25 @@ describe("Testing the PUT function of the API", () => {
   });
 });
 
-describe("Testing the DELETE function of the API", () => {
-  test("succeeds with status code 204 if id is valid", async () => {
+describe("Testing the DELETE function of the BLOGS API", () => {
+  test("succeeds with status code 204 if id and token is valid", async () => {
+    const user = {
+      username: "mluukkai",
+      password: "salainen",
+    };
+    const res = await api.post("/api/login").send(user);
+    //console.log("Token :", token.body);
     const blogsAtStart = await helper.blogsInDb();
     const blogToDelete = blogsAtStart[0];
+    //console.log("BlogToDelete :", blogToDelete);
 
-    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .set({
+        Authorization: `Bearer ${res.body.token}`,
+        "Content-Type": "application/json",
+      })
+      .expect(204);
 
     const blogsAtEnd = await helper.blogsInDb();
 
@@ -220,6 +320,24 @@ describe("Testing the DELETE function of the API", () => {
     const contents = blogsAtEnd.map((r) => r.title);
 
     expect(contents).not.toContain(blogToDelete.title);
+  });
+  test("Does not succeed if token is invalid", async () => {
+    const blogsAtStart = await helper.blogsInDb();
+    const blogToDelete = blogsAtStart[0];
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .set({
+        Authorization: `XXX`,
+        "Content-Type": "application/json",
+      })
+      .expect(401);
+  });
+  test("Does not succeed if no token is provided", async () => {
+    const blogsAtStart = await helper.blogsInDb();
+    const blogToDelete = blogsAtStart[0];
+
+    await api.delete(`/api/blogs/${blogToDelete.id}`).expect(401);
   });
 });
 
