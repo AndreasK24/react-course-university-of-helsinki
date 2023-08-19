@@ -12,17 +12,47 @@ usersRouter.get("/", async (request, response) => {
   response.json(users);
 });
 
+usersRouter.get("/:id", async (request, response) => {
+  const user = await User.findById(request.params.id).populate("blogs", {
+    title: 1,
+    author: 1,
+    url: 1,
+    likes: 1,
+  });
+  if (user) {
+    response.json(user);
+  } else {
+    response.status(404).end();
+  }
+});
+
 usersRouter.post("/", async (request, response) => {
   const { username, name, password } = request.body;
 
   const saltRounds = 10;
-  const passwordHash = await bcrypt.hash(password, saltRounds);
+  if (!password || !username)
+    return response
+      .status(400)
+      .json({ error: "No password or username provided" });
+  else if (password.length < 3)
+    return response
+      .status(400)
+      .json({ error: "Password length must be greater than 3" });
+  else if (username.length < 3)
+    return response
+      .status(400)
+      .json({ error: "Username length must be greater than 3" });
+  else {
+    const passwordHash = await bcrypt.hash(password, saltRounds);
+    const user = new User({
+      username,
+      name,
+      passwordHash,
+    });
+    const savedUser = await user.save();
 
-  const user = new User({
-    username,
-    name,
-    passwordHash,
-  });
+    response.status(201).json(savedUser);
+  }
 
   const savedUser = await user.save();
 
