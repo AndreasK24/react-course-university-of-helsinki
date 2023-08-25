@@ -13,8 +13,6 @@ const Blog = ({ blog, updateBlog, deleteBlog }) => {
     event.preventDefault();
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`))
       await deleteBlog(blog.id, blog);
-    else {
-    }
   };
   return (
     <div style={blogStyle}>
