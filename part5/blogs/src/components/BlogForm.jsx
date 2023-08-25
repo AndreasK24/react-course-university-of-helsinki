@@ -1,29 +1,17 @@
 import { useState } from "react";
-import blogService from "../services/blogs";
 
-const BlogForm = ({ blogs, setBlogs, setErrorMessage, setError }) => {
+const BlogForm = ({ createBlog, setError, setErrorMessage }) => {
   const [newTitle, setNewTitle] = useState("");
   const [newAuthor, setNewAuthor] = useState("");
   const [newUrl, setNewUrl] = useState("");
-  const handleTitleChange = (event) => {
-    setNewTitle(event.target.value);
-  };
-  const handleAuthorChange = (event) => {
-    setNewAuthor(event.target.value);
-  };
-  const handleUrlChange = (event) => {
-    setNewUrl(event.target.value);
-  };
+
   const addBlog = async (event) => {
     event.preventDefault();
-    const blogObject = {
+    await createBlog({
       title: newTitle,
       author: newAuthor,
       url: newUrl,
-    };
-
-    const returnedBlog = await blogService.create(blogObject);
-    setBlogs(blogs.concat(returnedBlog));
+    });
     setNewTitle("");
     setNewAuthor("");
     setNewUrl("");
@@ -33,6 +21,17 @@ const BlogForm = ({ blogs, setBlogs, setErrorMessage, setError }) => {
       setErrorMessage(null);
     }, 5000);
   };
+
+  const handleTitleChange = (event) => {
+    setNewTitle(event.target.value);
+  };
+  const handleAuthorChange = (event) => {
+    setNewAuthor(event.target.value);
+  };
+  const handleUrlChange = (event) => {
+    setNewUrl(event.target.value);
+  };
+
   return (
     <form onSubmit={addBlog}>
       <div>Title :</div>
