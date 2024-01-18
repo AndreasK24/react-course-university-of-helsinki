@@ -1,22 +1,37 @@
-// import React from "react";
-// import { render, screen } from "@testing-library/react";
-// import "@testing-library/jest-dom";
+import React from "react";
+import { render, screen } from "@testing-library/react";
+import "@testing-library/jest-dom";
 
-// import NoteForm from "../src/components/NoteForm";
-// import userEvent from "@testing-library/user-event";
+import BlogForm from "./BlogForm";
+import userEvent from "@testing-library/user-event";
 
-// test("<NoteForm /> updates parent state and calls onSubmit", async () => {
-//   const createNote = jest.fn();
-//   const user = userEvent.setup();
+test("<BlogForm /> updates parent state and calls onSubmit", async () => {
+  const createBlog = jest.fn();
+  const setError = jest.fn();
+  const setErrorMessage = jest.fn();
+  const user = userEvent.setup();
 
-//   render(<NoteForm createNote={createNote} />);
+  render(
+    <BlogForm
+      createBlog={createBlog}
+      setError={setError}
+      setErrorMessage={setErrorMessage}
+    />
+  );
 
-//   const input = screen.getByPlaceholderText("write note content here");
-//   const sendButton = screen.getByText("save");
+  const inputTitle = screen.getByPlaceholderText("write title here");
+  const inputAuthor = screen.getByPlaceholderText("write author here");
+  const inputURL = screen.getByPlaceholderText("write url here");
 
-//   await user.type(input, "testing a form...");
-//   await user.click(sendButton);
+  const sendButton = screen.getByText("create");
 
-//   expect(createNote.mock.calls).toHaveLength(1);
-//   expect(createNote.mock.calls[0][0].content).toBe("testing a form...");
-// });
+  await user.type(inputTitle, "testing title");
+  await user.type(inputAuthor, "testing author");
+  await user.type(inputURL, "testing url");
+  await user.click(sendButton);
+  console.log(createBlog.mock.calls[0][0]);
+  expect(createBlog.mock.calls).toHaveLength(1);
+  expect(createBlog.mock.calls[0][0].title).toBe("testing title");
+  expect(createBlog.mock.calls[0][0].author).toBe("testing author");
+  expect(createBlog.mock.calls[0][0].url).toBe("testing url");
+});
