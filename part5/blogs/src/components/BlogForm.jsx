@@ -35,13 +35,25 @@ const BlogForm = ({ createBlog, setError, setErrorMessage }) => {
   return (
     <form onSubmit={addBlog}>
       <div>Title :</div>
-      <input value={newTitle} onChange={handleTitleChange} />
+      <input
+        value={newTitle}
+        onChange={handleTitleChange}
+        placeholder="write title here"
+      />
       <br></br>
       <div>Author :</div>
-      <input value={newAuthor} onChange={handleAuthorChange} />
+      <input
+        value={newAuthor}
+        onChange={handleAuthorChange}
+        placeholder="write author here"
+      />
       <br></br>
       <div>URL :</div>
-      <input value={newUrl} onChange={handleUrlChange} />
+      <input
+        value={newUrl}
+        onChange={handleUrlChange}
+        placeholder="write url here"
+      />
       <br></br>
       <button type="submit">create</button>
     </form>

@@ -9,8 +9,10 @@ const BlogDetails = ({ blog, updateBlog }) => {
     });
   };
   return (
-    <div>
+    <div className="blogDetails">
       Author: {blog.author}
+      <br></br>
+      Title: {blog.title}
       <br></br>
       URL: {blog.url}
       <br></br>
