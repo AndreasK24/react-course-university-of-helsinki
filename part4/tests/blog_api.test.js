@@ -49,8 +49,8 @@ describe("Testing the POST function of the BLOGS API", () => {
       likes: 10,
     };
     const user = {
-      username: "mluukkai",
-      password: "salainen",
+      username: "root",
+      password: "sekret",
     };
     const res = await api.post("/api/login").send(user);
     await api

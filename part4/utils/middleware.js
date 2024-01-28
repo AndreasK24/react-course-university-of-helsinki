@@ -1,6 +1,7 @@
 const logger = require("./logger");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
+require("dotenv").config();
 
 const requestLogger = (request, response, next) => {
   logger.info("Method:", request.method);
@@ -46,7 +47,9 @@ const userExtractor = async (request, response, next) => {
     const decodedToken = jwt.verify(request.token, process.env.SECRET);
     if (!decodedToken.id) {
       response.status(401).json({ error: "token invalid" });
-    } else request.user = await User.findById(decodedToken.id);
+    } else {
+      request.user = await User.findById(decodedToken.id);
+    }
   } else response.status(401).json({ error: "Unauthorized" });
   next();
 };
