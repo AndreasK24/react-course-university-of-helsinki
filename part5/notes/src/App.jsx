@@ -4,6 +4,7 @@ import Note from "./components/Note";
 import Notification from "./components/Notification";
 import Footer from "./components/Footer";
 import noteService from "./services/notes";
+import loginService from "./services/login";
 import Togglable from "./components/Togglable";
 import LoginForm from "./components/LoginForm";
 import NoteForm from "./components/NoteForm";
@@ -53,6 +54,12 @@ const App = () => {
       noteService.setToken(user.token);
     }
   }, []);
+
+  const handleLogout = () => {
+    window.localStorage.removeItem("loggedNoteappUser");
+    setUser(null);
+    noteService.setToken("XXX");
+  };
 
   const noteFormRef = useRef();
 
@@ -104,6 +111,7 @@ const App = () => {
       {user && (
         <div>
           <p>{user.name} logged in</p>
+          <button onClick={handleLogout}>logout</button>
           {
             <Togglable buttonLabel="new note" ref={noteFormRef}>
               <NoteForm createNote={addNote} />

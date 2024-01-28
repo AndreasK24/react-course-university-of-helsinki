@@ -1,17 +1,18 @@
 import { useState } from "react";
 
-const NoteForm = ({ createNote }) => {
+const NoteForm = ({ createNote, user }) => {
   const [newNote, setNewNote] = useState("");
 
   const handleChange = (event) => {
     setNewNote(event.target.value);
   };
 
-  const addNote = (event) => {
+  const addNote = async (event) => {
     event.preventDefault();
-    createNote({
+    await createNote({
       content: newNote,
-      important: Math.random() > 0.5,
+      important: true,
+      user,
     });
 
     setNewNote("");
