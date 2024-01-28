@@ -14,7 +14,7 @@ const getAll = () => {
 
 const create = async (newObject) => {
   const config = {
-    headers: { Authorization: token },
+    headers: { Authorization: token, "Content-Type": "application/json" },
   };
 
   const response = await axios.post(baseUrl, newObject, config);

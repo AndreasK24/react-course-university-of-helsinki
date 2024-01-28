@@ -16,7 +16,10 @@ const BlogDetails = ({ blog, updateBlog }) => {
       <br></br>
       URL: {blog.url}
       <br></br>
-      Likes: {blog.likes} <button onClick={addLikeToBlog}>like</button>
+      Likes: {blog.likes}{" "}
+      <button id="like-button" onClick={addLikeToBlog}>
+        like
+      </button>
       <br></br>
       {blog.id}
     </div>

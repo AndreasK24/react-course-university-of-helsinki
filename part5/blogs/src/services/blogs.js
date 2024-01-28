@@ -1,5 +1,5 @@
 import axios from "axios";
-const baseUrl = "http://localhost:3003/api/blogs";
+const baseUrl = "http://localhost:3001/api/blogs";
 
 let token = null;
 
@@ -14,7 +14,7 @@ const getAll = () => {
 
 const create = async (newObject) => {
   const config = {
-    headers: { Authorization: token },
+    headers: { Authorization: token, "Content-Type": "application/json" },
   };
 
   const response = await axios.post(baseUrl, newObject, config);
@@ -23,7 +23,7 @@ const create = async (newObject) => {
 
 const update = async (id, newObject) => {
   const config = {
-    headers: { Authorization: token },
+    headers: { Authorization: token, "Content-Type": "application/json" },
   };
   const response = await axios.put(`${baseUrl}/${id}`, newObject, config);
   return response.data;
@@ -31,7 +31,7 @@ const update = async (id, newObject) => {
 
 const eliminate = async (id) => {
   const config = {
-    headers: { Authorization: token },
+    headers: { Authorization: token, "Content-Type": "application/json" },
   };
   await axios.delete(`${baseUrl}/${id}`, config);
 };

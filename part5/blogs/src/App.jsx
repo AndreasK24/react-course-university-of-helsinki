@@ -105,11 +105,11 @@ const App = () => {
       {user && (
         <div>
           <p>{user.name} logged in</p>
-          <button onClick={() => handleLogout()}>logout</button>
+          <button onClick={handleLogout}>logout</button>
 
           <h1>Create new blog</h1>
           {
-            <Togglable buttonLabel="new blog" ref={blogFormRef}>
+            <Togglable buttonLabel="New blog" ref={blogFormRef}>
               <BlogForm
                 createBlog={addBlog}
                 setError={setError}
@@ -124,6 +124,7 @@ const App = () => {
                 blog={blog}
                 updateBlog={updateBlog}
                 deleteBlog={deleteBlog}
+                user={user}
               />
             ))}
           </ul>

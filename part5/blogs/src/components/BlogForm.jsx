@@ -36,6 +36,7 @@ const BlogForm = ({ createBlog, setError, setErrorMessage }) => {
     <form onSubmit={addBlog}>
       <div>Title :</div>
       <input
+        id="title"
         value={newTitle}
         onChange={handleTitleChange}
         placeholder="write title here"
@@ -43,6 +44,7 @@ const BlogForm = ({ createBlog, setError, setErrorMessage }) => {
       <br></br>
       <div>Author :</div>
       <input
+        id="author"
         value={newAuthor}
         onChange={handleAuthorChange}
         placeholder="write author here"
@@ -50,12 +52,15 @@ const BlogForm = ({ createBlog, setError, setErrorMessage }) => {
       <br></br>
       <div>URL :</div>
       <input
+        id="url"
         value={newUrl}
         onChange={handleUrlChange}
         placeholder="write url here"
       />
       <br></br>
-      <button type="submit">create</button>
+      <button id="create-button" type="submit">
+        create
+      </button>
     </form>
   );
 };
