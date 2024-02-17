@@ -15,11 +15,18 @@ const Anecdote = ({ anecdote, handleClick }) => {
 
 const AnecdoteList = () => {
   const dispatch = useDispatch();
-  const anecdotes = useSelector((state) => state);
+  const anecdotes = useSelector(({ filter, anecdotes }) => {
+    if (!filter) {
+      return anecdotes;
+    }
+    const replace = `${filter}`;
+    const regex = new RegExp(replace, "g");
+
+    return anecdotes.filter((anecdote) => regex.test(anecdote.content));
+  });
 
   return (
     <ul>
-      <h2>Anecdotes</h2>
       {anecdotes.map((anecdote) => (
         <Anecdote
           key={anecdote.id}
