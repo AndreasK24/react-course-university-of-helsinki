@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import noteService from "../services/notes";
+import noteService from "../../services/notes";
 
 const noteSlice = createSlice({
   name: "notes",
